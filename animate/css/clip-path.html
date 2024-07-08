@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .clip {
+        width: 400px;
+        height: 400px;
+        background-color: #f00;
+        clip-path: path('M 50 50 A 50 50 10 1 0 100,100 L 100 50Z');
+      }
+    </style>
+  </head>
+  <body>
+    <div class="clip"></div>
+    <svg >
+        <path d="M 50 50 A 50 50 10 1 0 100,100 L 100 50Z">
+            <animate
+                attributeName="d"
+                dur="3s"
+                from="M 50 50 A 50 50 10 1 0 100,100 L 100 50"
+                to="M 50 50 A 50 50 10 1 0 100,100 L 100 0"
+                repeatCount="0"
+            />
+        </path>
+        
+      </rect>
+        <path
+            fill="none"
+            stroke="lightgrey"
+            d="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z" />
+
+        <circle r="5" fill="red">
+            <animateMotion
+            dur="10s"
+            repeatCount="indefinite"
+            path="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z" />
+        </circle>
+    </svg>
+    
+  </body>
+</html>

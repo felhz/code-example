@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="btn">d</div>
+    <script>
+      const a = () => {
+        console.log(11);
+        const arr = Array(10000).fill(1);
+        for (let index = 0; index < arr.length; index++) {
+          const element = arr[index];
+          console.log(element);
+        }
+      };
+      btn.onclick = a;
+    </script>
+  </body>
+</html>

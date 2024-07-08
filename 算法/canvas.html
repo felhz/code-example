@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CPU运行图</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="cpuCanvas" width="400" height="300"></canvas>
+
+    <script>
+      // 获取画布和绘图上下文
+      const canvas = document.getElementById('cpuCanvas');
+      const ctx = canvas.getContext('2d');
+      const arr = [20, 40, 60, 20, 30, 20, 60];
+      let total = arr.length;
+      // 模拟 CPU 运行的函数示例（假设是一个简单的计数器）
+      function simulateCPU() {
+        let count = 0;
+        ctx.translate(110, 110);
+        // 每隔一段时间执行一次
+        setInterval(() => {
+          arr.shift();
+          arr.push(60 * Math.random());
+          // 清除之前的绘图
+          ctx.clearRect(-110, -110, canvas.width, canvas.height);
+          // 模拟 CPU 的运行状态
+          count++;
+
+          // 在画布上绘制 CPU 运行图形
+          ctx.fillStyle = 'blue';
+          ctx.fillRect(50, 70, count, 20); // 用矩形表示CPU状态
+
+          // 在画布上绘制其他信息，如指令流、寄存器状态等
+
+          // 示例：在画布上显示CPU计数值
+          ctx.fillStyle = 'black';
+          ctx.font = '16px Arial';
+          ctx.fillText('CPU Count: ' + count, 50, 100);
+          ctx.beginPath();
+          ctx.strokeStyle = 'red';
+          arr.forEach((i, index) => {
+            if (index === 0) {
+              ctx.moveTo(index * 30, i);
+            } else {
+              ctx.lineTo(index * 30, i);
+            }
+          });
+          ctx.stroke();
+          arr.forEach((i, index) => {
+            ctx.beginPath();
+            ctx.arc(index * 30, i, 4, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+          });
+          ctx.beginPath();
+          ctx.strokeStyle = 'black';
+          ctx.moveTo(-5, 65);
+          ctx.lineTo(180, 65);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.strokeStyle = 'black';
+          ctx.moveTo(-5, 0);
+          ctx.lineTo(-5, 65);
+          ctx.stroke();
+        }, 800); // 间隔1秒执行一次
+      }
+
+      // 开始模拟 CPU 运行
+      simulateCPU();
+    </script>
+  </body>
+</html>

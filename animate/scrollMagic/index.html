@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body,
+    html {
+      height: 100%;
+    }
+    .scoller {
+      border: 1px solid red;
+    }
+  </style>
+  <body>
+    <div>
+      <div id="one">one</div>
+      <div id="two" style="height: 100vh">two</div>
+      <div class="scoller">
+        <div id="number" class="box">11</div>
+      </div>
+      <div id="two" style="height: 100vh">two</div>
+      <div id="three" style="height: 100vh">three</div>
+    </div>
+    <script src="./anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/ScrollMagic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/plugins/debug.addIndicators.min.js"></script>
+    <script>
+      var controller = new ScrollMagic.Controller();
+      const animate = anime.timeline({});
+      animate.add({
+        targets: '#number',
+        fontSize: '100',
+        translateX: '100',
+        duration: 1000,
+        easing: 'easeInOutQuad',
+      });
+      const number = document.getElementById('number');
+      new ScrollMagic.Scene({
+        triggerElement: '#one',
+        duration: window.innerHeight, // the scene should last for a scroll distance of 100px
+        offset: 300, // start this scene after scrolling for 50px
+      })
+        .setPin('#one') // pins the element for the the scene's duration
+        .on('progress', function (event) {
+          oneAni.seek(event.progress * 1000);
+        })
+        .addIndicators({
+          colorTrigger: 'black',
+          colorStart: 'blue',
+          colorEnd: 'red',
+          indent: 1,
+        })
+        .addTo(controller); // assign the scene to the controller
+
+      // create a scene
+      new ScrollMagic.Scene({
+        triggerElement: '.scoller',
+        duration: window.innerHeight, // the scene should last for a scroll distance of 100px
+        offset: 0, // start this scene after scrolling for 50px
+      })
+        .setPin('.scoller') // pins the element for the the scene's duration
+        .on('enter', function (e) {
+          console.log('enter', e);
+        })
+        .on('progress', function (event) {
+          //   console.log('progress', event.progress);
+          animate.seek(event.progress * 1000);
+          //   number.style.fontSize = `${event.progress * 100 + 12}px `;
+        })
+        .addIndicators({
+          colorTrigger: 'black',
+          colorStart: 'blue',
+          colorEnd: 'red',
+          indent: 1,
+        })
+        .addTo(controller); // assign the scene to the controller
+      const oneAni = anime.timeline({});
+      oneAni.add({
+        targets: '#one',
+        translateX: '100',
+        fontSize: '100',
+        ratate: '360',
+        duration: 1000,
+        easing: 'easeInOutQuad',
+      });
+
+      // init controller
+    </script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div contenteditable="true" id="content">
+      <a href="baidu.com">122</a>
+      <a href="baidu.com">122</a>
+      <a href="baidu.com">122</a>
+    </div>
+    <script>
+      const ob = new MutationObserver(function (mutations) {
+        const el = mutations[0].target.parentElement;
+        if (el.tagName === 'A') {
+          el.remove();
+          return;
+        }
+        const isUrlReg = /https?:\/\/\S{1,4}/;
+        const textContent = mutations[0].target.textContent;
+        const textContentTrim = textContent.trim();
+        console.log(textContentTrim, textContent, 111);
+        if (isUrlReg.test(textContentTrim) && /\s+$/.test(textContent.at(-1))) {
+          const a = document.createElement('a');
+          a.href = textContentTrim;
+          a.textContent = textContentTrim;
+          mutations[0].target.remove();
+          document.querySelector('#content').appendChild(a);
+          const range = document.getSelection().getRangeAt(0);
+          range.setStart(a, 1);
+          return;
+        }
+      });
+      ob.observe(document.querySelector('#content'), {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+
+      const editableElement = document.querySelector('#content');
+
+      editableElement.addEventListener('paste', function (event) {
+        // 阻止默认的粘贴行为
+        event.preventDefault();
+
+        // 获取粘贴的文本数据
+        const text = event.clipboardData.getData('text/plain');
+        // 使用正则表达式查找链接（这里只是一个简单的示例）
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        let match;
+        let urls = [];
+        while ((match = urlRegex.exec(text)) !== null) {
+          urls.push(match[0]);
+        }
+
+        // 对每个链接进行处理（这里只是简单地用 <a> 标签包裹它们）
+        let processedText = text;
+        urls.forEach((url) => {
+          processedText = processedText.replace(
+            url,
+            `<a href="${url}" target="_blank">${url}</a>`
+          );
+        });
+        // 使用 DocumentFragment 插入处理后的文本
+        const fragment = document.createDocumentFragment();
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = processedText;
+        while (tempDiv.firstChild) {
+          fragment.appendChild(tempDiv.firstChild);
+        }
+        // 插入处理后的内容
+        editableElement.appendChild(fragment);
+        setTimeout(() => {
+          console.log(editableElement.innerText.length - 1);
+          const range = document.getSelection().getRangeAt(0);
+          console.log(range, 111);
+          range.setStart(tempDiv, 1);
+          //   range.setEnd(editableElement, editableElement.innerText.length - 1);
+        });
+      });
+    </script>
+    <a href="https://www.baidu.com" target="_blank">1122</a>
+  </body>
+</html>
+http://baidu.com dwa d d

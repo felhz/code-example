@@ -1,0 +1,51 @@
+在 Nginx 中，rewrite 指令用于重新定向 URL 请求或修改请求的路径。它允许你根据某些条件将请求重写到另一个 URL 或更改请求中的路径。以下是关于 Nginx 中 rewrite 指令的详细解释：
+
+1. rewrite 指令的基本语法
+nginx
+rewrite <regex> <replacement> [flag];
+<regex>：是一个 Perl 兼容的正则表达式，用于匹配请求的 URI。
+<replacement>：是 URI 替换后的新值。它可以是静态的，也可以是包含变量的动态值。
+[flag]：是一个可选的标志，用于控制重写后的行为。
+2. 常用的 flag 标志
+last：停止处理当前 location 块中的后续指令，并重新搜索与重写后的 URI 匹配的 location 块。如果找不到匹配的 location 块，则使用默认的 location 块。
+break：停止处理当前 location 块中的后续指令，并使用重写后的 URI 直接处理请求，而不再重新搜索其他 location 块。
+redirect：以 302 临时重定向的方式返回重写后的 URI。
+permanent：以 301 永久重定向的方式返回重写后的 URI。
+3. rewrite 的执行顺序
+首先，Nginx 会执行 server 块中的 rewrite 指令。
+然后，Nginx 会根据请求的 URI 选择匹配的 location 块。
+如果 location 块中包含了 rewrite 指令，Nginx 会执行这些指令。
+最后，根据 rewrite 指令中指定的 flag，Nginx 会重新搜索匹配的 location 块或直接处理请求。
+4. 示例
+示例 1：重定向旧 URL 到新 URL
+nginx
+server {  
+    listen 80;  
+    server_name example.com;  
+  
+    rewrite ^/old-url$ /new-url permanent;  
+  
+    location /new-url {  
+        # 处理 /new-url 的请求  
+    }  
+}
+示例 2：修改请求路径并停止处理后续指令
+nginx
+server {  
+    listen 80;  
+    server_name example.com;  
+  
+    location /some-path {  
+        rewrite ^/some-path/(.*)$ /another-path/$1 break;  
+        # 下面的指令将不会被执行  
+        # ...  
+    }  
+  
+    location /another-path {  
+        # 处理 /another-path 的请求  
+    }  
+}
+5. 注意事项
+使用 rewrite 指令时要小心，避免循环重定向或不必要的重定向。
+如果可能，尽量使用 try_files 指令而不是 rewrite 来处理静态文件请求，因为 try_files 通常更高效。
+当你需要基于某些条件重写 URL 时，可以使用 if 指令与 rewrite 指令结合使用。但请注意，if 指令在 Nginx 中的使用受到一些限制和争议，因为它可能会导致配置错误和不可预期的行为。在大多数情况下，最好使用 location 块和 rewrite 指令来实现你的需求。

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- G 核心 -->
+    <script
+      src="https://unpkg.com/@antv/g/dist/index.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <!-- G 渲染器，支持 Canvas2D/SVG/WebGL -->
+    <script
+      src="https://unpkg.com/@antv/g-canvas/dist/index.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <!-- <script src="https://unpkg.com/@antv/g-svg/dist/index.umd.min.js" type="application/javascript"></script>
+<script src="https://unpkg.com/@antv/g-webgl/dist/index.umd.min.js" type="application/javascript"></script> -->
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      // 从核心包中引入画布、Circle 等对象
+      const { Circle, Canvas, CanvasEvent, Line } = window.G;
+
+      // 创建一个渲染器，这里使用 Canvas2D
+      const canvasRenderer = new window.G.Canvas2D.Renderer();
+
+      // 创建画布
+      const canvas = new Canvas({
+        container: 'container',
+        width: 600,
+        height: 500,
+        renderer: canvasRenderer,
+      });
+
+      // 等待画布初始化完成
+      canvas.addEventListener(CanvasEvent.READY, () => {
+        const r = 50;
+        const cx = 200,
+          cy = 200;
+        const circle = new Circle({
+          style: {
+            r,
+            cursor: 'pointer',
+            cx,
+            cy,
+            stroke: 'rgb(255, 0, 0)',
+          },
+        });
+        // 向画布中加入 Circle
+        canvas.appendChild(circle);
+        for (let index = 0; index <= 360; index += 6) {
+          const x1 = cx + r * Math.cos((index * Math.PI) / 180);
+          const y1 = cy + r * Math.sin((index * Math.PI) / 180);
+          const x2 = cx + (r - 4) * Math.cos((index * Math.PI) / 180);
+          const y2 = cy + (r - 4) * Math.sin((index * Math.PI) / 180);
+          const line = new Line({
+            style: {
+              x1,
+              y1,
+              x2,
+              y2,
+              stroke: index % 30 === 0 ? 'blue' : 'red',
+              lineWidth: index % 30 === 0 ? 2 : 1,
+            },
+          });
+          canvas.appendChild(line);
+        }
+        const mm = new Line({
+          style: {
+            x1: cx,
+            y1: cy,
+            stroke: 'green',
+            lineWidth: 2,
+          },
+        });
+        canvas.appendChild(mm);
+        const run = () => {
+          const age = 270 + new Date().getSeconds() * 6;
+          mm.attr({
+            x2: cx + r * Math.cos((age * Math.PI) / 180),
+            y2: cy + r * Math.sin((age * Math.PI) / 180),
+          });
+          requestAnimationFrame(run);
+        };
+        requestAnimationFrame(run);
+      });
+      const camera = canvas.getCamera();
+    </script>
+  </body>
+</html>

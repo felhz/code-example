@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html {
+        font-size: calc(100vw / 7.5);
+      }
+      body {
+        font-size: 15px;
+      }
+      #menu {
+        position: fixed;
+        top: 0px;
+        background-color: #fff;
+        padding: 0 10px;
+        border: 1px solid #ccc;
+      }
+      #tools {
+        display: flex;
+        position: fixed;
+        display: none;
+        background-color: #fff;
+        padding: 0 10px;
+      }
+      #tools span {
+        margin: 0 5px;
+        cursor: pointer;
+      }
+      #editor {
+        position: relative;
+        min-height: 200px;
+      }
+      [contenteditable='true']:focus {
+        outline: greenyellow solid 2px;
+      }
+      #editor p {
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="font-size: 0.3rem">ddd</div>
+    文本编辑器
+    <div id="editorContainer"></div>
+    <div id="editor" contenteditable="true">
+      <p>文本编辑器大大</p>
+      <p>文本编辑器大大</p>
+      <p>文本编辑器大大</p>
+    </div>
+    <div id="menu" style="display: none"></div>
+    <div id="tools">
+      <span class="jiacu" title="加粗">B</span>
+      <span title="斜体">em</span>
+      <span>link</span>
+    </div>
+    <script>
+      const editor = document.getElementById('editor');
+      const menuContainer = document.getElementById('menu');
+      const tools = document.getElementById('tools');
+
+      editor.addEventListener('click', function (event) {
+        const targetElement = event.target;
+        if (targetElement.tagName === 'A') {
+          event.preventDefault(); // 阻止默认行为
+          window.open(targetElement.href); // 打开新窗口
+        }
+      });
+      menuContainer.innerHTML = `
+        <p>图片</p>
+        <p>block</p>
+        <p> &#x1F60A; </p>
+        <p> &#10084;</p>
+         <p> &#127775;</p>
+      `;
+      cursor = null;
+      window.onkeyup = (e) => {
+        if (e.key === '/') {
+          const selection = window.getSelection();
+          console.log(selection);
+          el = selection.focusNode.parentElement;
+          showMenu({
+            x: el.offsetLeft + el.offsetWidth,
+            y: el.offsetTop + el.offsetHeight + 10,
+          });
+        }
+      };
+      const hideMenu = () => {
+        menuContainer.style.display = 'none';
+      };
+      const showMenu = (position) => {
+        menuContainer.style.display = 'block';
+        menuContainer.style.left = position.x + 'px';
+        menuContainer.style.top = position.y + 'px';
+      };
+      menuContainer.onclick = (e) => {
+        if (e.target.innerHTML === '图片') {
+          el.innerHTML = el.innerHTML.slice(0, el.innerHTML.length - 1);
+          el.innerHTML +=
+            '<img width=100 src="https://www.eeo.im/cn/images/cn/homepage/teacher.png" alt="" />';
+        } else if (e.target.innerHTML === 'block') {
+          alert('未实现');
+        } else {
+          el.innerHTML = el.innerHTML.slice(0, el.innerHTML.length - 1);
+          el.innerHTML += e.target.innerHTML;
+        }
+        hideMenu();
+      };
+
+      // 工具条
+      let range = null;
+      // 监听选区变化事件
+      document.addEventListener('selectionchange', () => {
+        const selection = window.getSelection();
+        // 获取新的选区
+        if (selection.isCollapsed) {
+          console.log('collapsed');
+        } else {
+          // 选区变化时触发的处理逻辑
+          console.log('Selection changed!');
+          el = selection.focusNode.parentElement;
+          range = selection.getRangeAt(0);
+          console.log(range);
+          const clinet = range.getBoundingClientRect();
+          if (range.startContainer.parentElement.tagName === 'STRONG') {
+            tools.querySelector('.jiacu').style.fontWeight = 'bold';
+            tools.querySelector('.jiacu').setAttribute('title', '取消加粗');
+          } else {
+            tools.querySelector('.jiacu').style.fontWeight = 'normal';
+            tools.querySelector('.jiacu').setAttribute('title', '加粗');
+          }
+          showTools({
+            x: clinet.x,
+            y: clinet.y - clinet.height - 10,
+          });
+        }
+      });
+      const showTools = (position) => {
+        tools.style.display = 'block';
+        tools.style.left = position.x + 'px';
+        tools.style.top = position.y + 'px';
+      };
+      const hideTools = () => {
+        tools.style.display = 'none';
+      };
+      tools.onclick = (e) => {
+        let wrapper = 'em';
+        let contents = range.cloneContents();
+        let wrapperEL = document.createElement(wrapper);
+        if (e.target.innerHTML === 'B') {
+          wrapper = 'strong';
+          wrapperEL = document.createElement(wrapper);
+          if (range.startContainer.parentElement.tagName === 'STRONG') {
+            let text = range.toString();
+            let content = document.createElement('span');
+            content.append(text);
+            range.deleteContents();
+            range.endContainer.parentElement.parentElement.append(content);
+            hideTools();
+            return;
+          }
+        }
+        if (e.target.innerHTML === 'link') {
+          wrapper = 'a';
+          wrapperEL = document.createElement(wrapper);
+          wrapperEL.setAttribute('href', 'https://www.baidu.com');
+          if (range.startContainer.parentElement.tagName === 'EM') {
+            let text = range.toString();
+            range.startContainer.parentElement.remove();
+            range.insertNode(document.createTextNode(text));
+            hideTools();
+            return;
+          }
+        }
+        wrapperEL.append(contents);
+        range.deleteContents();
+        range.insertNode(wrapperEL);
+        hideTools();
+      };
+    </script>
+  </body>
+</html>

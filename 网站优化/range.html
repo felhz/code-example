@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Set Text Selection Example</title>
+  </head>
+  <body>
+    <textarea id="myTextarea">Hello, this is a sample text.</textarea>
+
+    <button onclick="setSelection()">Set Selection</button>
+
+    <script>
+      function setSelection() {
+        const textarea = document.getElementById('myTextarea');
+        // 设置选区从第7个字符开始，到第11个字符结束（不包括结束字符）
+        textarea.selectionStart = 7;
+        textarea.selectionEnd = 11;
+        // 聚焦到textarea以确保选区可见
+        textarea.focus();
+      }
+    </script>
+  </body>
+</html>

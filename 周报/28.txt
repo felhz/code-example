@@ -1,0 +1,8 @@
+1. 【【待办-打卡】将打卡子待办手动标记到已处理，往日待补交、往日待订正没有显示】https://www.tapd.cn/45976096/bugtrace/bugs/view?bug_id=1145976096001146918
+2. 【【待办-打卡】】https://www.tapd.cn/45976096/bugtrace/bugs/view?bug_id=1145976096001146945
+3. 【【待办-打卡】学生已订正后，文案应该显示‘已订正’，现在显示‘已打卡’】https://www.tapd.cn/45976096/bugtrace/bugs/view?bug_id=1145976096001146945
+4. 更新530翻译文案
+5. 
+
+may 
+1. 【【LMS-打卡二期】【前端】学生端当日打卡处于需订正状态，学生端进入待办页查看，对应打卡cell尾部未显示[订正]按钮】https://www.tapd.cn/45976096/bugtrace/bugs/view?bug_id=1145976096001149245

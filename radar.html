@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://unpkg.com/@antv/g/dist/index.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-canvas/dist/index.umd.min.js"
+      type="application/javascript"
+    ></script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div></div>
+    <script>
+      const {
+        Circle,
+        Canvas,
+        CanvasEvent,
+        Line,
+        Path,
+        Polygon,
+        Group,
+        Rect,
+        Image,
+        Text,
+      } = window.G;
+
+      const radarMap = {
+        canvas: null,
+        _group: null,
+        // 雷达坐标和半径
+        _radarConfig: {
+          r: 100,
+          cx: 100,
+          cy: 100,
+        },
+        init() {
+          const canvasRenderer = new window.G.Canvas2D.Renderer();
+          const canvas = new Canvas({
+            container: 'container',
+            width: 600,
+            height: 500,
+            renderer: canvasRenderer,
+          });
+          this.canvas = canvas;
+          this._group = new Group({});
+
+          // 画布初始化完成
+          this.canvas.addEventListener(CanvasEvent.READY, () => {
+            this._createRadarBg();
+            this._createCalibratedScale();
+            this._createScan();
+            this._createAircraft();
+            canvas.appendChild(this._group);
+          });
+        },
+        _createScan() {
+          const g = this._group;
+          const { r, cx, cy } = this._radarConfig;
+          const scan = new Path({
+            style: {
+              d: `M 100 100 A ${r} ${r}, 0, 0, 0, 130 250  L${cx} ${cy}Z`,
+              fill: 'green',
+              opacity: 0.4,
+            },
+          });
+          scan.setOrigin(cx, cy);
+          g.appendChild(scan);
+          this._scanAnimate(scan);
+        },
+        _createRadarBg() {
+          const g = this._group;
+          const { r, cx, cy } = this._radarConfig;
+          const circle = new Circle({
+            style: {
+              cx,
+              cy,
+              r,
+              fill: 'rgba(0,92,65,0.1)',
+            },
+          });
+          g.appendChild(circle);
+        },
+        _createCalibratedScale() {
+          const { r, cx, cy } = this._radarConfig;
+          const g = this._group;
+          for (let index = 25; index <= r; index += 25) {
+            const circle = new Circle({
+              style: {
+                cx,
+                cy,
+                r: index,
+                stroke: 'green',
+              },
+            });
+            g.appendChild(circle);
+          }
+          for (let deg = 0; deg < 360; deg += 20) {
+            const five = deg % 5 === 0;
+            const line = new Line({
+              style: {
+                x1: cx + r * Math.cos((deg * Math.PI) / 180),
+                y1: cy + r * Math.sin((deg * Math.PI) / 180),
+                x2: cx,
+                y2: cy,
+                stroke: 'green',
+              },
+            });
+            g.appendChild(line);
+          }
+        },
+        _createAircraft() {
+          const { r, cx, cy } = this._radarConfig;
+          const canvas = this.canvas;
+
+          for (let index = 0; index < 4; index++) {
+            const random = Math.random();
+            const deg = random * 360;
+            const r = random * 100;
+            let x = cx + r * Math.cos((deg * Math.PI) / 180);
+            let y = cy + r * Math.sin((deg * Math.PI) / 180);
+            const air = new G.Image({
+              className: 'aircraft',
+              style: {
+                x,
+                y,
+                width: 10,
+                height: 10,
+                archor: [0],
+                src: '',
+              },
+            });
+            canvas.appendChild(air);
+            air.animate(
+              [
+                {
+                  opacity: 1,
+                },
+                {
+                  opacity: 0,
+                },
+              ],
+              {
+                duration: 1000,
+                iterations: Infinity,
+              }
+            );
+          }
+          // 随机生成飞机位置
+          //   setInterval(() => {
+          //     const aircrafts =
+          //       canvas.document.getElementsByClassName('aircraft');
+          //     aircrafts.forEach((aircraft) => {
+          //       const random = Math.random();
+          //       const deg = random * 360;
+          //       const r = random * 100;
+          //       const x = cx + r * Math.cos((deg * Math.PI) / 180);
+          //       const y = cy + r * Math.sin((deg * Math.PI) / 180);
+          //       aircraft.attr('x', x);
+          //       aircraft.attr('y', y);
+          //     });
+          //   }, 1000);
+        },
+        _scanAnimate(scan) {
+          const { r, cx, cy } = this._radarConfig;
+          let deg = 0;
+          this.canvas.addEventListener(CanvasEvent.BEFORE_RENDER, (e) => {
+            const startRad = (deg * Math.PI) / 180;
+            const x1 = cx + r * Math.cos(startRad);
+            const y1 = cy + r * Math.sin(startRad);
+            const endRad = ((deg + 80) * Math.PI) / 180;
+            const x2 = cx + r * Math.cos(endRad);
+            const y2 = cy + r * Math.sin(endRad);
+            // 是否大弧画 如果起始点不变，需要用到次标志
+            // const largeRrcFlag = deg % 360 > 180 ? 1 : 0;
+            const largeRrcFlag = 0;
+            scan.attr(
+              'd',
+              `M ${x1} ${y1} A ${r} ${r}, 0, ${largeRrcFlag}, 1, ${x2} ${y2}  L${cx} ${cy}Z
+            `
+            );
+            deg += 0.9;
+          });
+        },
+      };
+      radarMap.init();
+    </script>
+  </body>
+</html>

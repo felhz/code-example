@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="file" id="input" />
+    <script>
+      /**
+       * 大文件分片上传
+       */
+      const ajax = (url, method, data) => {
+        return new Promise((resolve, reject) => {
+          const req = new XMLHttpRequest();
+          req.open(method, url);
+          req.onload = () => {
+            if (req.status === 200) {
+              resolve(req.response);
+            } else {
+              reject(req.statusText);
+            }
+          };
+          req.onerror = () => {
+            reject(req.statusText);
+          };
+          req.send(data);
+        });
+      };
+      input.onchange = (e) => {
+        var file = e.target.files[0];
+        upload(file.slice(0, 10), 0);
+        upload(file.slice(10), 1);
+      };
+      const upload = (file, index) => {
+        /**
+         * 上传文件的时候，如果不设置请求头，会默认设置为
+         *  req.setRequestHeader(
+         *  'Content-Type',
+         *   'multipart/form-data; boundary=----WebKitFormBoundaryJXSTrdWNOkFDikcY',
+         * );
+         */
+        const formData = new FormData();
+        formData.append('files', file, 'dd' + index);
+        ajax('http://localhost:3000/api/upload', 'POST', formData);
+      };
+    </script>
+  </body>
+</html>

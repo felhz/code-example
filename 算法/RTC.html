@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebRTC DataChannel Example</title>
+  </head>
+  <body>
+    <h1>WebRTC DataChannel Example</h1>
+    <a href="https://share.eeo.im/s/lms/">直接访问</a>
+    <textarea id="messageBox" placeholder="Type your message"></textarea>
+    <button onclick="sendMessage()">Send</button>
+    <div id="messageContainer"></div>
+    <div id="btn-demo">唤起</div>
+    </div>
+    <script>
+      var pc = new RTCPeerConnection();
+
+      // 创建数据通道
+      var dataChannel = pc.createDataChannel('textChannel');
+
+      // 监听收到的消息
+      dataChannel.onmessage = function (event) {
+        displayReceivedMessage(event.data);
+      };
+
+      // 显示收到的消息
+      function displayReceivedMessage(message) {
+        var messageContainer = document.getElementById('messageContainer');
+        var messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        messageContainer.appendChild(messageElement);
+      }
+
+      // 发送消息
+      function sendMessage() {
+        var messageBox = document.getElementById('messageBox');
+        var message = messageBox.value;
+
+        // 显示发送的消息
+        displaySentMessage(message);
+
+        // 发送消息到数据通道
+        dataChannel.send(message);
+
+        // 清空消息框
+        messageBox.value = '';
+      }
+
+      // 显示已发送的消息
+      function displaySentMessage(message) {
+        var messageContainer = document.getElementById('messageContainer');
+        var messageElement = document.createElement('div');
+        messageElement.textContent = 'Me: ' + message;
+        messageContainer.appendChild(messageElement);
+      }
+      const btn = document.querySelector("#btn-demo")
+      btn.onClick = () => {
+        // 创建一个iframe元素
+        var iframe = document.createElement('iframe');
+
+        // 设置iframe的属性
+        iframe.width = '600';
+        iframe.height = '400';
+        iframe.src = 'https://static.eeo.im/s/lms/'; // 你想要加载的网页
+
+        // 将iframe添加到body中
+        document.body.appendChild(iframe);
+      };
+    </script>
+  </body>
+</html>
+// https://share.eeo.im/s/basic/message/demo.html

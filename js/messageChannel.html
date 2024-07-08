@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="btn">发送</div>
+    <script>
+      const channel = new MessageChannel();
+
+      // 通过 MessageChannel.port2.onmessage 监听消息
+      channel.port2.onmessage = function (event) {
+        console.log('Received:', event.data);
+      };
+      btn.onclick = function () {
+        // 通过 MessageChannel.port1.postMessage() 发送消息
+        channel.port1.postMessage('Hello, world!');
+      };
+    </script>
+  </body>
+</html>

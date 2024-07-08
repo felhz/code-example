@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <svg width="600">
+      <path
+        id="d"
+        stroke="red"
+        fill="red"
+        d="M20 20  Q 50,50  80,20 t 60,0 60,0"
+      ></path>
+      <circle r="3" fill="red">
+        <animateMotion dur="3s" repeatCount="indefinite">
+          <mpath xlink:href="#d"></mpath>
+        </animateMotion>
+      </circle>
+
+      <path
+        d="M100 100 A50 50 0 1 0 99,100Z"
+        stroke="red"
+        fill="none"
+        id="dd"
+      />
+      <circle r="10" fill="red">
+        <animateMotion dur="3s" repeatCount="indefinite">
+          <mpath xlink:href="#dd"></mpath>
+        </animateMotion>
+      </circle>
+    </svg>
+  </body>
+</html>
