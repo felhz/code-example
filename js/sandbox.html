@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 简单版沙箱
+      class SnapshotSandBox {
+        windowSnapshot = {};
+        modifyPropsMap = {};
+        active() {
+          for (const prop in window) {
+            this.windowSnapshot[prop] = window[prop];
+          }
+          Object.keys(this.modifyPropsMap).forEach((prop) => {
+            window[prop] = this.modifyPropsMap[prop];
+          });
+        }
+        inactive() {
+          for (const prop in window) {
+            if (window[prop] !== this.windowSnapshot[prop]) {
+              this.modifyPropsMap[prop] = window[prop];
+              window[prop] = this.windowSnapshot[prop];
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
