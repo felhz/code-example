@@ -2,27 +2,6 @@
 // 算法将数组分为已排序和未排序两部分，每次从未排序部分取出一个元素，将其插入到已排序部分的正确位置，直到所有元素都被插入到已排序部分。
 
 function insertionSort(arr) {
-  let n = arr.length;
-  for (let i = 1; i < n; i++) {
-    let key = arr[i];
-    let j = i - 1;
-    // 将 arr[i] 插入到已排序部分的正确位置
-    while (j >= 0 && arr[j] > key) {
-      arr[j + 1] = arr[j];
-      j = j - 1;
-    }
-    arr[j + 1] = key;
-  }
-  return arr;
-}
-
-// 测试
-let array = [64, 34, 25, 12, 22, 11, 90];
-console.log('Original array:', array);
-let sortedArray = insertionSort(array);
-console.log('Sorted array:', sortedArray);
-
-function insertionSort1(arr) {
   // 对于数组的每一个元素，从它开始到0位置，比较该元素和前一个元素的大小
   for (let i = 1; i < arr.length; i++) {
     let current = arr[i];
@@ -38,14 +17,9 @@ function insertionSort1(arr) {
   // 返回排序后的数组
   return arr;
 }
-let a = (arr) => {
-  for (let i = 0; i < array.length; i++) {
-    let cur = array[i];
-    let j = i - 1;
-    while (j >= 0 && array[j] > cur) {
-      array[j + 1] = array[j];
-      j--;
-    }
-    arr[j + 1] = cur;
-  }
-};
+
+// 测试
+let array = [64, 34, 25, 12, 22, 11, 90];
+console.log('Original array:', array);
+let sortedArray = insertionSort(array);
+console.log('Sorted array:', sortedArray);
