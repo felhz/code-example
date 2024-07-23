@@ -11,7 +11,7 @@ http
       return;
     }
 
-    if (req.url === '/dd') {
+    if (req.url === '/sse') {
       res.writeHead(200, {
         'Content-Type': 'text/event-stream', // 设置为 text/event-stream
         'Cache-Control': 'no-cache', // 禁用缓存
@@ -19,8 +19,8 @@ http
       });
       let count = 1;
       const timer = setInterval(() => {
-        res.write(`id: ${count}\n`);
-        res.write(`event: message\n`);
+        // res.write(`id: ${count}\n`);
+        // res.write(`event: message\n`);
         // 每次消息结束都要以两个换行符结尾
         res.write(`data: 1111\n\n`);
         count++;

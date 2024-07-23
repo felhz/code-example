@@ -21,3 +21,31 @@ let array = [64, 34, 25, 12, 22, 11, 90];
 console.log('Original array:', array);
 let sortedArray = insertionSort(array);
 console.log('Sorted array:', sortedArray);
+
+function insertionSort1(arr) {
+  // 对于数组的每一个元素，从它开始到0位置，比较该元素和前一个元素的大小
+  for (let i = 1; i < arr.length; i++) {
+    let current = arr[i];
+    let j = i - 1;
+    // 如果该元素小于前一个元素，那么前一个元素向后移动，并继续向前比较
+    while (j >= 0 && arr[j] > current) {
+      arr[j + 1] = arr[j];
+      j--;
+    }
+    // 如果该元素大于前一个元素，那么它将放到合适的位置
+    arr[j + 1] = current;
+  }
+  // 返回排序后的数组
+  return arr;
+}
+let a = (arr) => {
+  for (let i = 0; i < array.length; i++) {
+    let cur = array[i];
+    let j = i - 1;
+    while (j >= 0 && array[j] > cur) {
+      array[j + 1] = array[j];
+      j--;
+    }
+    arr[j + 1] = cur;
+  }
+};

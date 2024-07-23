@@ -1,0 +1,73 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML5 Drag and Drop</title>
+    <style>
+      #dragContainer {
+        width: 200px;
+        height: 200px;
+        border: 2px solid black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .draggable {
+        width: 100px;
+        height: 100px;
+        background-color: lightblue;
+        text-align: center;
+        line-height: 100px;
+        cursor: move;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="draggableElement" class="draggable" draggable="true">Drag me</div>
+    <div id="dragContainer"></div>
+    <script>
+      const draggableElement = document.getElementById('draggableElement');
+      const dragContainer = document.getElementById('dragContainer');
+
+      // 添加拖拽开始事件
+      draggableElement.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', e.target.id);
+        setTimeout(() => {
+          e.target.style.visibility = 'hidden';
+        }, 0);
+      });
+
+      // 添加拖拽结束事件
+      draggableElement.addEventListener('dragend', (e) => {
+        e.target.style.visibility = 'visible';
+      });
+
+      // 添加拖拽进入容器事件
+      dragContainer.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        e.target.style.border = '2px dashed red';
+      });
+
+      // 添加拖拽离开容器事件
+      dragContainer.addEventListener('dragleave', (e) => {
+        e.target.style.border = '2px solid black';
+      });
+
+      // 添加拖拽在容器上移动事件
+      dragContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+
+      // 添加放置事件
+      dragContainer.addEventListener('drop', (e) => {
+        console.log(11);
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text');
+        const draggable = document.getElementById(id);
+        dragContainer.style.border = '2px solid black';
+        draggable.style.visibility = 'visible';
+        dragContainer.appendChild(draggable);
+      });
+    </script>
+  </body>
+</html>
