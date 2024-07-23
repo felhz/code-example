@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="demo"></div>
+    <iframe src="http://baidu.com" frameborder="0"></iframe>
+    <script>
+      const ws = new WebSocket('ws://127.0.0.1:3000/path');
+      ws.onopen = () => {
+        console.log('connected');
+        ws.send('hello');
+      };
+    </script>
+  </body>
+</html>

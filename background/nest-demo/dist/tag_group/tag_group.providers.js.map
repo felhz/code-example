@@ -1,0 +1,1 @@
+{"version":3,"file":"tag_group.providers.js","sourceRoot":"","sources":["../../src/tag_group/tag_group.providers.ts"],"names":[],"mappings":";;;AACA,kEAAuD;AAE1C,QAAA,aAAa,GAAG;IAC3B;QACE,OAAO,EAAE,oBAAoB;QAC7B,UAAU,EAAE,CAAC,UAAsB,EAAE,EAAE,CAAC,UAAU,CAAC,aAAa,CAAC,2BAAQ,CAAC;QAC1E,MAAM,EAAE,CAAC,aAAa,CAAC;KACxB;CACF,CAAC"}
