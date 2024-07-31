@@ -5,7 +5,7 @@ import Scene from './Scene';
 const Rotate = () => {
   return (
     <Canvas>
-      <OrbitControls enableRotate={false} />
+      <OrbitControls enableRotate={true} />
       <ambientLight intensity={Math.PI} />
       <Scene></Scene>
     </Canvas>

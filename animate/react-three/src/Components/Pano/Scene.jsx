@@ -13,16 +13,13 @@ const Scene = () => {
     '/pano/bottom.png',
     '/pano/front.png',
     '/pano/back.png',
-    // '/pano/front.png',
-    // '/pano/front.png',
-    // '/pano/front.png',
-    // '/pano/front.png',
   ]);
 
   useEffect(() => {
     gl.setSize(300, 300);
     camera.position.set(1, 0, -1.5);
   }, []);
+
   return (
     <mesh
       scale={[3, 3, 3]}
