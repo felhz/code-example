@@ -13,6 +13,20 @@ function Com() {
   const arcPoints = arc.getPoints(50);
   const [position, setPosition] = useState(new THREE.Vector2());
   const earth = useLoader(THREE.TextureLoader, '/earth.jpg');
+  const start = new THREE.Spherical(radius, (Math.PI / 180) * 0, 0);
+  const center = new THREE.Spherical(radius + 2, (Math.PI / 180) * 60, 0);
+  const end = new THREE.Spherical(radius, (Math.PI / 180) * 70, Math.PI);
+  const curve = new THREE.CatmullRomCurve3(
+    [
+      new THREE.Vector3().setFromSpherical(start),
+      new THREE.Vector3().setFromSpherical(center),
+      new THREE.Vector3().setFromSpherical(end),
+    ],
+    false,
+    'centripetal',
+    0.5
+  );
+  const curvePoints = curve.getPoints(50);
   useFrame((state) => {
     // 获取到的是秒
     const elapsed = state.clock.getElapsedTime();
@@ -34,11 +48,12 @@ function Com() {
           <meshStandardMaterial />
         </mesh>
       </mesh>
+      <Line points={curvePoints} color={new THREE.Color(0xff0000)} />
     </group>
   );
 }
 
-const Geo = () => {
+const Map = () => {
   return (
     <Canvas
       shadows
@@ -60,4 +75,4 @@ const Geo = () => {
     </Canvas>
   );
 };
-export default Geo;
+export default Map;

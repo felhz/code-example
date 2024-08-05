@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 function Com() {
   const { scene } = useThree();
-  const data = useLoader(THREE.FileLoader, '/geo/hebei.json');
+  const data = useLoader(THREE.FileLoader, '/geo/china.json');
   const [fonts, setFonts] = useState([]);
   useEffect(() => {
     let _data = JSON.parse(data);
