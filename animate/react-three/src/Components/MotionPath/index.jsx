@@ -1,18 +1,7 @@
-import { Line, OrbitControls, Sphere, useMotion } from '@react-three/drei';
+import { Line, OrbitControls, Sphere } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
-
-function Loop() {
-  const motion = useMotion();
-  useFrame((state, delta) => {
-    // Set the current position along the curve, you can increment indiscriminately for a loop
-    motion.current += delta;
-    // Look ahead on the curve
-    motion.object.current.lookAt(motion.next);
-    // console.log(motion.current);
-  });
-}
 
 function Com() {
   const pathPoints = [
@@ -41,17 +30,6 @@ function Com() {
   });
   return (
     <group>
-      {/* <MotionPathControls
-        offset={0}
-        focus={poi}
-        damping={0.2}
-        curves={[
-          new THREE.CubicBezierCurve3(
-            new THREE.Vector3(0, 0, 0),
-            new THREE.Vector3(10, 0, 0)
-          ),
-        ]}
-      ></MotionPathControls> */}
       <Sphere ref={poi}>
         <meshStandardMaterial color="hotpink" />
       </Sphere>
