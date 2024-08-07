@@ -3,7 +3,6 @@ import {
   GizmoViewport,
   Line,
   OrbitControls,
-  Sphere,
 } from '@react-three/drei';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { useState } from 'react';
@@ -14,24 +13,31 @@ function Com() {
   const arcPoints = arc.getPoints(50);
   const [position, setPosition] = useState(new THREE.Vector2());
   const earth = useLoader(THREE.TextureLoader, '/earth.jpg');
-  const start = new THREE.Spherical(radius, (Math.PI / 180) * 45, 0);
-  const center = new THREE.Spherical(radius + 3, (Math.PI / 180) * 60, 0);
-  const end = new THREE.Spherical(radius, (Math.PI / 180) * 75, 0);
+  const start = new THREE.Spherical(radius + 0, (Math.PI / 180) * 0, 0);
+  const start1 = new THREE.Spherical(radius + 2, (Math.PI / 180) * 45, 0);
+  const center = new THREE.Spherical(radius + 3, (Math.PI / 180) * 90, 0);
+  const center1 = new THREE.Spherical(radius + 2, (Math.PI / 180) * 135, 0);
+  const end = new THREE.Spherical(radius + 0, (Math.PI / 180) * 180, 0);
 
-  const curve = new THREE.QuadraticBezierCurve3(
-    new THREE.Vector3().setFromSpherical(start),
-    new THREE.Vector3().setFromSpherical(center),
-    new THREE.Vector3().setFromSpherical(end)
+  const curve = new THREE.CatmullRomCurve3(
+    [
+      new THREE.Vector3().setFromSpherical(start),
+      new THREE.Vector3().setFromSpherical(start1),
+      new THREE.Vector3().setFromSpherical(center),
+      new THREE.Vector3().setFromSpherical(center1),
+      new THREE.Vector3().setFromSpherical(end),
+    ],
+    false,
+    'catmullrom',
+    0.5
   );
   const curvePoints = curve.getPoints(100);
-  const [air, setAir] = useState(new THREE.Vector3());
   useFrame((state) => {
     // 获取到的是秒
     const elapsed = state.clock.getElapsedTime();
     const t = (elapsed / 15) % 1;
     const point = arc.getPointAt(t);
     setPosition(point);
-    setAir(curve.getPointAt((elapsed / 3) % 1));
   });
 
   return (
@@ -41,12 +47,6 @@ function Com() {
         <meshStandardMaterial map={earth} />
       </mesh>
       <Line points={curvePoints} color={new THREE.Color(0xff0000)} />
-      <Sphere
-        position={air}
-        args={[1]}
-        color={new THREE.Color(0x00ff00)}
-        scale={0.2}
-      />
       <mesh>
         <Line points={arcPoints} color={new THREE.Color(0x00ff00)}></Line>
         <mesh position={[...position, 0]}>
@@ -72,6 +72,7 @@ const Map = () => {
       camera={{ position: [0, 0, 40], fov: 45 }}
     >
       <OrbitControls />
+      {/* <axesHelper args={[10]} /> */}
       <GizmoHelper>
         <GizmoViewport
           axisColors={['red', 'green', 'blue']}

@@ -5,6 +5,7 @@ import App from './App.jsx';
 import Cannon from './Components/Cannon/index.jsx';
 import CatmullRomCurve3 from './Components/CatmullRomCurve3/index.jsx';
 import Collision from './Components/Collision/index.jsx';
+import Controls from './Components/Controls/index.jsx';
 import Hub from './Components/Hub/index.jsx';
 import Map from './Components/Map/index.jsx';
 import MotionPath from './Components/MotionPath/index.jsx';
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
   {
     path: '/map',
     element: <Map />,
+  },
+  {
+    path: '/control',
+    element: <Controls />,
   },
 ]);
 

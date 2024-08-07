@@ -3,8 +3,8 @@ import {
   GizmoHelper,
   GizmoViewport,
   Line,
+  OrbitControls,
   Text,
-  TrackballControls,
 } from '@react-three/drei';
 import { Canvas, useLoader, useThree } from '@react-three/fiber';
 import * as d3 from 'd3';
@@ -24,7 +24,7 @@ function Com() {
         .center([104.0, 37.5])
         .scale(80)
         .translate([0, 0]);
-
+      jsondata.features.pop();
       jsondata.features.forEach((elem) => {
         const name = elem.properties.name;
         const center = projection(elem.properties.center);
@@ -101,7 +101,7 @@ const Geo = () => {
       scene={{ background: new THREE.Color(0xffffff) }}
       camera={{ position: [0, 0, 40], fov: 45 }}
     >
-      <TrackballControls enablePan={true} enableRotate={false} />
+      <OrbitControls />
       {/* <axesHelper args={[10]} /> */}
       <GizmoHelper>
         <GizmoViewport
