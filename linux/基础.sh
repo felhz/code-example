@@ -9,3 +9,5 @@ sudo -l
 sudo visudo
  #  追加一下文件内容
  #  username   ALL=(ALL:ALL) ALL
+# 查看sudo用户有那些
+sudo cat /etc/sudoers

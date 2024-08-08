@@ -5,8 +5,8 @@ import {
   OrbitControls,
   Sphere,
 } from '@react-three/drei';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { useState } from 'react';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
+import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 function Com() {
   const radius = 10;
@@ -33,6 +33,12 @@ function Com() {
     setPosition(point);
     setAir(curve.getPointAt((elapsed / 3) % 1));
   });
+  const { scene } = useThree();
+  const sceneTexture = useLoader(THREE.TextureLoader, '/city-pano.jpg');
+  useEffect(() => {
+    scene.environment = sceneTexture;
+    scene.background = sceneTexture;
+  }, []);
 
   return (
     <group>
@@ -40,6 +46,7 @@ function Com() {
         <sphereGeometry args={[radius]} />
         <meshStandardMaterial map={earth} />
       </mesh>
+
       <Line points={curvePoints} color={new THREE.Color(0xff0000)} />
       <Sphere
         position={air}
@@ -66,11 +73,11 @@ const Map = () => {
   return (
     <Canvas
       shadows
-      dpr={[1, 2]}
+      dpr={[2, 2]}
       gl={{ alpha: false }}
-      scene={{ background: new THREE.Color(0xffffff) }}
       camera={{ position: [0, 0, 40], fov: 45 }}
     >
+      {/* <Environment files={'/city-pano.jpg'} background /> */}
       <OrbitControls />
       <GizmoHelper>
         <GizmoViewport
