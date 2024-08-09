@@ -13,7 +13,7 @@ let ErrorInterceptor = class ErrorInterceptor {
     intercept(context, next) {
         return next.handle().pipe((0, operators_1.map)((data) => {
             console.log(data);
-            return { ...data };
+            return { data };
         }));
     }
 };

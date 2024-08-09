@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="clients"></div>
+    <script>
+      const ws = new WebSocket('/');
+      ws.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        clients.innerHTML = '';
+        data.clients &&
+          data.clients.forEach((i) => {
+            clients.innerHTML += `<p>${i}</p>`;
+          });
+        console.log(e);
+      };
+
+      const data = {
+        event: 'dd',
+        data: 'user' + parseInt(Math.random() * 100),
+      };
+      ws.onopen = () => {
+        ws.send(JSON.stringify(data));
+      };
+      ws.onclose = () => {
+        console.log('close');
+      };
+      ws.onerror = (e) => {
+        console.log(e);
+      };
+    </script>
+  </body>
+</html>

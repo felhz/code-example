@@ -17,7 +17,7 @@ let AppController = class AppController {
         this.appService = appService;
     }
     getHello() {
-        return new common_1.BadRequestException(111);
+        return '111';
     }
 };
 exports.AppController = AppController;

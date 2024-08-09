@@ -13,7 +13,7 @@ export class ErrorInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((data) => {
         console.log(data);
-        return { ...data };
+        return { data };
       }),
     );
   }
