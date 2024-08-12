@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="clients"></div>
+    <script type="module">
+      import { io } from 'https://cdn.socket.io/4.7.5/socket.io.esm.min.js';
+
+      const socket = io('/admin', {
+        transports: ['websocket'],
+      });
+      // 服务端返回的数据
+      socket.on('hh', (arg) => {
+        console.log(arg, 'hhhhhhh'); // "world"
+      });
+      // 回调是返回的数据
+      socket.emit('message', 'world', (arg) => {
+        console.log(arg, 'emit'); // "got it"
+      });
+      // socket.on('message', (arg, callback) => {
+    </script>
+  </body>
+</html>

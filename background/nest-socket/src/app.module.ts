@@ -3,17 +3,17 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SocketModule } from './socket/socket.module';
-import { WsGateway } from './ws/ws.gateway';
+import { HomeController } from './home/home.controller';
+import { SocketIoGateway } from './socket-io/socket-io.gateway';
 
 @Module({
   imports: [
-    SocketModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../static'),
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService, WsGateway],
+  controllers: [AppController, HomeController],
+  // providers: [AppService, WsGateway, SocketIoGateway],
+  providers: [AppService, SocketIoGateway],
 })
 export class AppModule {}

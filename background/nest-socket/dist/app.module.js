@@ -12,8 +12,10 @@ const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const da_module_1 = require("./da/da.module");
+const home_controller_1 = require("./home/home.controller");
+const socket_io_gateway_1 = require("./socket-io/socket-io.gateway");
 const socket_module_1 = require("./socket/socket.module");
-const ws_gateway_1 = require("./ws/ws.gateway");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -24,9 +26,10 @@ exports.AppModule = AppModule = __decorate([
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(__dirname, '../static'),
             }),
+            da_module_1.DaModule,
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, ws_gateway_1.WsGateway],
+        controllers: [app_controller_1.AppController, home_controller_1.HomeController],
+        providers: [app_service_1.AppService, socket_io_gateway_1.SocketIoGateway],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
