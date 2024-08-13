@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <div>用户列表</div>
+      <div id="users"></div>
+    </div>
+    <div id="clients"></div>
+    <script type="module">
+      const name = new URLSearchParams(location.search).get('name') || 'unknow';
+      import Soocket from 'https://cdn.socket.io/4.7.5/socket.io.esm.min.js';
+      const socket = Soocket.io('/yjs', {
+        transports: ['websocket'],
+      });
+      // 服务端返回的数据
+      socket.on('hh', (arg) => {
+        console.log(arg, 'hhhhhhh'); // "world"
+      });
+      // 回调是返回的数据
+      socket.emit(
+        'message',
+        {
+          room: 'room1',
+          avatar: '&#x1F600;',
+          name,
+        },
+        (data) => {
+          users.innerHTML = '';
+          data.clients.forEach((c) => {
+            users.innerHTML += `<div>${c.avatar} ${c.name}</div>`;
+          });
+          console.log(users.innerHTML);
+        },
+      );
+      // socket.on('message', (arg, callback) => {
+    </script>
+  </body>
+</html>
