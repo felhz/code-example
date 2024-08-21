@@ -10,6 +10,14 @@ http
       file.pipe(res);
       return;
     }
+    if (req.url.includes('.html')) {
+      const fileName = req.url.split('/').pop();
+      const file = fs.createReadStream(
+        path.resolve(__dirname, './' + fileName)
+      );
+      file.pipe(res);
+      return;
+    }
 
     if (req.url === '/sse') {
       res.writeHead(200, {
@@ -35,5 +43,24 @@ http
       });
       return;
     }
+    // octet 流
+    if (req.url === '/octet') {
+      res.writeHead(200, {
+        'Content-Type': 'application/octet-stream',
+      });
+      let count = 0;
+      const text = `line: { type: 'delta', delta: '是HTML和CSS${count}' }\n`;
+      count++;
+      res.write(text);
+      setInterval(() => {
+        res.write(`line: {"type":"delta","delta":"是HTML和CSS${count}"}\n`);
+        count++;
+        if (count > 10) {
+          res.end();
+        }
+      }, 1000);
+    }
   })
-  .listen(4000);
+  .listen(4000, () => {
+    console.log('server is running at http://localhost:4000');
+  });

@@ -1,0 +1,22 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model table {
+  id          Int         @id @default(autoincrement())
+  create_time DateTime?   @db.DateTime(0)
+  name1       String?     @db.VarChar(255)
+  group_id    Int
+  group_table group_table @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "table_ibfk_1")
+
+  @@index([group_id], map: "group_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model group_table {
+  id          Int       @id @default(autoincrement())
+  create_time DateTime? @db.DateTime(0)
+  name        String?   @db.VarChar(255)
+  table       table[]
+}

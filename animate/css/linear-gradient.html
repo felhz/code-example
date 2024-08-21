@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .bgWrap div {
+        width: 300px;
+        height: 50px;
+        background: linear-gradient(90deg, #f0fcf4, #c0f0d1);
+        background-size: 100% 100%;
+        border-radius: 25px;
+        margin-bottom: 10px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  </head>
+  <body>
+    <section>
+      周视图当前时间 <input type="date" id="week" />
+      <span id="weekRange"></span>
+    </section>
+    <section>活动开始 <input type="date" id="startTime" /></section>
+    <section>活动结束 <input type="date" id="endTime" /></section>
+    <div class="bgWrap" id="bgWrap">
+      <div></div>
+      <div id="process"></div>
+    </div>
+    <button id="calcBtn">计算</button>
+    <script>
+      week.onchange = (v) => {
+        const currentTime = dayjs(week.value);
+        const weekStart = currentTime.startOf('week');
+        const weekEnd = currentTime.endOf('week');
+        weekRange.innerText = `${weekStart.format(
+          'YYYY-MM-DD HH:mm:ss'
+        )} - ${weekEnd.format('YYYY-MM-DD HH:mm:ss')}`;
+      };
+      const isTimeBewteen = (time, activityStart, activityEnd) => {
+        return (
+          (time.isAfter(activityStart) && time.isBefore(activityEnd)) ||
+          time.isSame(activityStart) ||
+          time.isSame(activityEnd)
+        );
+      };
+
+      var genBg = () => {
+        // 开始比例
+        let startOffsetX = '0%';
+        // 背景图大小
+        let bgSize = '100%';
+        // 活动开始、结束时间
+        const activityStart = dayjs(startTime.value);
+        const activityEnd = dayjs(endTime.value).endOf('day');
+        // 选择的时间
+        const currentTime = dayjs(week.value);
+        const duration = activityEnd.diff(activityStart);
+        // 一秒代表的宽度
+        const bgWrapUnit =
+          bgWrap.getBoundingClientRect().width / (7 * 24 * 60 * 60);
+
+        const weekStart = currentTime.startOf('week');
+        const weekEnd = currentTime.endOf('week');
+
+        if (!isTimeBewteen(currentTime, activityStart, activityEnd)) {
+          alert('数据不合法');
+          return;
+        }
+        console.log(
+          '活动开始时间',
+          activityStart.format('YYYY-MM-DD HH:mm:ss'),
+          '结束时间',
+          activityEnd.format('YYYY-MM-DD HH:mm:ss'),
+          '持续时间',
+          duration
+        );
+
+        console.log(
+          '周开始',
+          weekStart.format('YYYY-MM-DD HH:mm:ss'),
+          '周结束',
+          weekEnd.format('YYYY-MM-DD HH:mm:ss')
+        );
+        // 如果活动开始时间和结束时间都在本周之内,显示宽度等于活动持续时间
+        if (
+          isTimeBewteen(activityStart, weekStart, weekEnd) &&
+          isTimeBewteen(activityEnd, weekStart, weekEnd)
+        ) {
+          bgSize = '100%';
+          startOffsetX = 0;
+        }
+        // 如果活动开始时间和结束时间都不在本周之内,显示宽度等于一周
+        if (
+          !isTimeBewteen(activityStart, weekStart, weekEnd) &&
+          !isTimeBewteen(activityEnd, weekStart, weekEnd)
+        ) {
+          bgSize = duration / ((1000 * 60 * 60 * 24 * 7) / 100) + '%';
+          // 如果活动开始时间不在本周之内
+          startOffsetX =
+            (
+              ((weekStart.valueOf() - activityStart.valueOf()) / duration) *
+              100
+            ).toFixed(4) + '%';
+        }
+
+        // 开始时间在本周之内， 不需要计算开始位置
+        if (
+          isTimeBewteen(activityStart, weekStart, weekEnd) &&
+          !isTimeBewteen(activityEnd, weekStart, weekEnd)
+        ) {
+          bgSize = (duration / 1000) * bgWrapUnit + 'px';
+        }
+        //结束时间在本周之内，需要计算开始位置
+        if (
+          !isTimeBewteen(activityStart, weekStart, weekEnd) &&
+          isTimeBewteen(activityEnd, weekStart, weekEnd)
+        ) {
+          bgSize = (duration / 1000) * bgWrapUnit + 'px';
+          startOffsetX =
+            ((weekStart.valueOf() - activityStart.valueOf()) / 1000) *
+              bgWrapUnit +
+            'px';
+        }
+
+        process.style.backgroundSize = `${bgSize} 100%`;
+        process.style.backgroundPosition = `${startOffsetX} 0`;
+        process.innerText = `${startOffsetX} bgSize${bgSize}`;
+      };
+      calcBtn.onclick = genBg;
+    </script>
+  </body>
+</html>

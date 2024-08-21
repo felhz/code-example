@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  published Boolean? @default(false)
+  userId    Int
+  user      Uesr     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Post_userId_fkey")
+}
+
+model Uesr {
+  id       Int      @id @default(autoincrement())
+  date     DateTime @db.DateTime(0)
+  authorId Int?
+  Post     Post[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model table_name {
+  id   Int     @id @default(autoincrement())
+  name String? @db.VarChar(255)
+}
+
+model table {
+  id          Int         @id @default(autoincrement())
+  create_time DateTime?   @db.DateTime(0)
+  name1       String?     @db.VarChar(255)
+  group_id    Int
+  group_table group_table @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "table_ibfk_1")
+
+  @@index([group_id], map: "group_id")
+  @@index([create_time], map: "create_time")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model group_table {
+  id          Int       @id @default(autoincrement())
+  create_time DateTime? @db.DateTime(0)
+  name        String?   @db.VarChar(255)
+  table       table[]
+}

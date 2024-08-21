@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script>
+      // 使用 SSE.js原理使用了XMLHttpRequest对象
+      fetch('/octet', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/plain',
+          Accept: 'text/plain',
+        },
+      }).then((res) => {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        reader.read().then(function processText({ done, value }) {
+          if (done) {
+            return;
+          }
+          let text = decoder.decode(value, { stream: true });
+          console.log(text);
+
+          buffer += text;
+          content.innerText += text;
+          const parts = buffer.split('line: ');
+          buffer = parts.pop();
+          for (const part of parts) {
+            // console.log(part);
+          }
+          return reader.read().then(processText);
+        });
+      });
+    </script>
+  </body>
+</html>

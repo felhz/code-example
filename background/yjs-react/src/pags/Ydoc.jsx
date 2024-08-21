@@ -9,9 +9,10 @@ const ydoc = new Y.Doc();
 const yText = ydoc.getText('content');
 // 服务端返回的数据
 socket.on('update', (arg) => {
-  console.log('推送更新数据', arg);
-  // Y.applyUpdate(ydoc, new Uint8Array(arg.update));
-  // document.querySelector('#desc').innerHTML = yText.toString();
+  Y.applyUpdate(ydoc, new Uint8Array(arg.update));
+  const decoder = new TextDecoder('utf-8');
+  console.log('推送更新数据', decoder.decode(new Uint8Array(arg.update)));
+  document.querySelector('#desc').innerHTML = yText.toString();
 });
 socket.on('updateuser', (data) => {
   const users = document.getElementById('users');
@@ -60,11 +61,18 @@ function Ydoc() {
   return (
     <>
       <div id="users"></div>
-      <textarea name="" id="textarea"></textarea>
+      <textarea
+        name=""
+        id="textarea"
+        onChange={(e) => {
+          console.log(e.target.value);
+        }}
+      ></textarea>
       <div
         onClick={() => {
           const text = document.getElementById('textarea').value;
-          yText.insert(text.legnth, text);
+          yText.insert(document.querySelector('#desc').innerHTML.length, text);
+          document.querySelector('#desc').innerHTML = yText.toString();
         }}
       >
         send

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      div {
+        height: 200vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div>&#0020; &#0020;&#128507; &#1F638;</div>
+    <script>
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/octet', true);
+      xhr.setRequestHeader('Content-Type', 'text/plain');
+      xhr.responseType = 'text';
+      setInterval(() => {
+        if (xhr.readyState === 3) {
+          //   console.log(xhr.responseText);
+        }
+      }, 1000);
+      xhr.send();
+
+      const a = new Uint8Array([49, 49, 49]);
+
+      const blob = new Blob([a]);
+      blob.arrayBuffer().then((v) => console.log(v));
+      blob.text().then((v) => console.log(v));
+      document.addEventListener('click', (e) => {
+        console.log(e.screenX, e.screenY);
+      });
+    </script>
+  </body>
+</html>
