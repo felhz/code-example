@@ -5,6 +5,13 @@ const path = require('path');
 
 http
   .createServer((req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+    res.setHeader(
+      'access-control-allow-methods',
+      'GET,POST,PUT,DELETE,OPTIONS'
+    );
+    res.setHeader('access-control-allow-headers', '*');
+    res.setHeader('access-control-allow-credentials', true);
     if (req.url === '/') {
       const file = fs.createReadStream(path.resolve(__dirname, './index.html'));
       file.pipe(res);
@@ -49,11 +56,13 @@ http
         'Content-Type': 'application/octet-stream',
       });
       let count = 0;
-      const text = `line: { type: 'delta', delta: '是HTML和CSS${count}' }\n`;
+      const text = `line: { "type": "delta", "delta": "## 是HTML和CSS${count}\\n"\n}`;
       count++;
       res.write(text);
       setInterval(() => {
-        res.write(`line: {"type":"delta","delta":"是HTML和CSS${count}"}\n`);
+        res.write(
+          `line: {"type":"delta","delta":"## 是HTML和CSS${count}\\n"\n}`
+        );
         count++;
         if (count > 10) {
           res.end();
