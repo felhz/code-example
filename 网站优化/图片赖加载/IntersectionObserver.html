@@ -33,7 +33,7 @@
       list = document.querySelectorAll('#wrap div');
       const ob = new IntersectionObserver(
         function (entries, observer) {
-          console.log(entries[0]);
+          console.log(entries);
           for (let entry of entries) {
             if (entry.isIntersecting) {
               // console.log(entry);

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      var myWorker = new SharedWorker('./shared.js', 'shared');
+      myWorker.port.onmessage = function (e) {
+        console.log('Message received from worker', 'index data:', e.data);
+      };
+      myWorker.port.start();
+    </script>
+  </body>
+</html>
