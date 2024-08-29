@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      div {
+        height: 110vh;
+        width: 100vw;
+      }
+    </style>
+  </head>
+  <body>
+    <div></div>
+    <div></div>
+    <div></div>
+    <img id="ava" src="./avatar_defalut.png" alt="" loading="lazy" />
+    <script>
+      const ava = document.querySelector('#ava');
+      ava.onload = function () {
+        console.log('图片加载完成');
+      };
+    </script>
+  </body>
+</html>
