@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas id="canvas" width="300" height="300"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/fabric@6.4.1/dist/index.js"></script>
+    <script>
+      const canvas = new fabric.Canvas('canvas');
+      const rect = new fabric.Rect({
+        top: 100,
+        left: 100,
+        width: 60,
+        height: 70,
+        fill: 'red',
+      });
+      const rect1 = new fabric.Rect({
+        top: 100,
+        left: 100,
+        width: 60,
+        height: 70,
+        fill: 'red',
+      });
+      canvas.add(rect, rect1);
+      canvas.on({
+        'object:moving': onChange,
+        'object:scaling': onChange,
+        'object:rotating': onChange,
+      });
+
+      function onChange(options) {
+        console.log(options.target);
+
+        options.target.setCoords();
+        canvas.forEachObject(function (obj) {
+          if (obj === options.target) return;
+          obj.set(
+            'opacity',
+            options.target.intersectsWithObject(obj) ? 0.5 : 1
+          );
+        });
+      }
+    </script>
+  </body>
+</html>

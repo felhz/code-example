@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <video id="videoElement" height="400px" width="400px" controls></video>
+    <div id="btn">start</div>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <script>
+      var handle = () => {
+        if (navigator.mediaDevices.getDisplayMedia) {
+          navigator.mediaDevices
+            .getDisplayMedia({ video: true, audio: true })
+            .then(function (stream) {
+              // 处理媒体流，例如将其发送到 WebRTC 连接
+              videoElement.srcObject = stream;
+              videoElement.play();
+              // 录制视频，可以使用 MediaRecorder API
+              //   const recorder = new MediaRecorder(stream);
+              //   recorder.ondataavailable = (e) => {
+              //     console.log('data available: ', e.data);
+              //     const blob = new Blob([e.data], { type: 'video/mp4' });
+              //     const objUrl = URL.createObjectURL(blob);
+              //     videoElement.src = objUrl;
+              //     videoElement.play();
+              //   };
+
+              //   recorder.start();
+              // 接下来可以建立 WebRTC 连接
+            })
+            .catch(function (err0r) {
+              console.log('Error: ' + error);
+            });
+        }
+      };
+      const videoElement = document.querySelector('#videoElement');
+      btn.onclick = handle;
+
+      //   var canvas = document.getElementById('canvas');
+      //   var ctx = canvas.getContext('2d');
+      //   videoElement.addEventListener(
+      //     'play',
+      //     function () {
+      //       draw(this, ctx, canvas.width, canvas.height);
+      //     },
+      //     false
+      //   );
+      //   function draw(video, ctx, width, height) {
+      //     if (video.paused || video.ended) return false;
+      //     ctx.drawImage(video, 0, 0, width, height);
+      //     requestAnimationFrame(function () {
+      //       draw(video, ctx, width, height);
+      //     });
+      //   }
+    </script>
+  </body>
+</html>

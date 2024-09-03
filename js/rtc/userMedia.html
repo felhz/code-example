@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <video id="videoElement" height="400px" width="400px" controls></video>
+    <button id="btn">start</button>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <script>
+      var handle = () => {
+        if (navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices
+            .getUserMedia({ video: true, audio: true })
+            .then(function (stream) {
+              stream.onaddtrack = (event) => {
+                console.log(`${event.track.kind} track added`);
+              };
+              videoElement.srcObject = stream;
+              videoElement.play();
+            })
+            .catch(function (err0r) {
+              console.log('Error: ' + error);
+            });
+        }
+      };
+      const videoElement = document.querySelector('#videoElement');
+      btn.onclick = handle;
+      // canvas预览
+      // var canvas = document.getElementById('canvas');
+      // var ctx = canvas.getContext('2d');
+      // videoElement.addEventListener(
+      //   'play',
+      //   function () {
+      //     draw(this, ctx, canvas.width, canvas.height);
+      //   },
+      //   false
+      // );
+      // function draw(video, ctx, width, height) {
+      //   if (video.paused || video.ended) return false;
+      //   ctx.drawImage(video, 0, 0, width, height);
+      //   requestAnimationFrame(function () {
+      //     draw(video, ctx, width, height);
+      //   });
+      // }
+    </script>
+  </body>
+</html>
