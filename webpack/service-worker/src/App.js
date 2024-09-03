@@ -7,6 +7,6 @@ function App() {
     </div>
   );
 }
-console.log(1222);
+console.log(12);
 
 export default App;
