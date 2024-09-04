@@ -678,6 +678,7 @@ module.exports = function (webpackEnv) {
         // 不允许遗留任何“旧的” ServiceWorkers
         clientsClaim: true,
         skipWaiting: true,
+        exclude: [/\.html$/],
       }),
       // TypeScript type checking
       useTypeScript &&
