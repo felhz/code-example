@@ -6,5 +6,8 @@
     "selfsigned": "^2.4.1",
     "sse.js": "^2.5.0",
     "webpack": "^5.94.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.1.4"
   }
 }
