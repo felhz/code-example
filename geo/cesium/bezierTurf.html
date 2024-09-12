@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
+    <style>
+      .cesium-widget-credits {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+
+    <script type="module">
+      // let startLonLat = [115.0, 37.0];
+
+      // var line = turf.lineString([startLonLat, [130.0, 0]]);
+
+      // var greatCircle = turf.bezierSpline(line);
+
+      // console.log(greatCircle.geometry.coordinates);
+
+      Cesium.Ion.defaultAccessToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YmM4OTk0NC03MmRjLTQ0MTUtOTQxMy05MTk3OGFjZmU0MGMiLCJpZCI6MjQwMzAwLCJpYXQiOjE3MjU5MzU2MTd9.114QjBPqRG6mIGeLyF71ORY99cYaBSxKoA6e3QuUa-8';
+
+      // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrain: Cesium.Terrain.fromWorldTerrain(),
+        timeline: false,
+        animation: false,
+      });
+      viewer.scene.postProcessStages.fxaa.enabled = true;
+      viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
+      var layer = new Cesium.UrlTemplateImageryProvider({
+        url: 'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+        minimumLevel: 4,
+        maximumLevel: 18,
+      });
+      viewer.imageryLayers.addImageryProvider(layer);
+      const genrateBezier = (startLonLat, endLonLat) => {
+        // let startLonLat = [130.0, 90.0];
+        var start = turf.point(startLonLat);
+        // var end = turf.point([130.0, 0]);
+        var end = turf.point(endLonLat);
+
+        var greatCircle = turf.greatCircle(start, end, {
+          properties: { name: 'Seattle to DC' },
+          npoints: 9000,
+        });
+        const points = greatCircle.geometry.coordinates;
+        // 计算贝塞尔曲线上的点
+        const numPoints = 100;
+        const bezierPoints = [];
+        for (let i = 0; i < points.length; i++) {
+          let item = points[i];
+          bezierPoints.push(...item, 0); // 添加高度
+        }
+
+        // 创建 Polyline 实体
+        const polyline = viewer.entities.add({
+          polyline: {
+            positions: Cesium.Cartesian3.fromDegreesArrayHeights(bezierPoints),
+            width: 2,
+            shadows: true,
+            material: Cesium.Color.RED.withAlpha(0.5),
+          },
+        });
+        const point = viewer.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(...startLonLat),
+          point: {
+            pixelSize: 5,
+            color: Cesium.Color.GREEN,
+          },
+        });
+        viewer.zoomTo(polyline);
+        let duration = 5000;
+        viewer.clock.onTick.addEventListener((args) => {
+          const t = (args._lastSystemTime / duration) % 1;
+          const bezierPoint = points[Math.floor(t * points.length)];
+          point.position = Cesium.Cartesian3.fromDegrees(...bezierPoint, 0);
+        });
+      };
+
+      const bezierPoints = [
+        [
+          [115.0, 37.0],
+          [115.0, 0],
+        ],
+        [
+          [115.0, 90.0],
+          [130.0, 0],
+        ],
+        [
+          [115.0, 0.0],
+          [130.0, -90],
+        ],
+      ];
+      bezierPoints.forEach((item, index) => {
+        genrateBezier(...item);
+      });
+    </script>
+  </body>
+</html>

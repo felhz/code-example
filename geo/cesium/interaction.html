@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      .cesium-widget-credits {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      Cesium.Ion.defaultAccessToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YmM4OTk0NC03MmRjLTQ0MTUtOTQxMy05MTk3OGFjZmU0MGMiLCJpZCI6MjQwMzAwLCJpYXQiOjE3MjU5MzU2MTd9.114QjBPqRG6mIGeLyF71ORY99cYaBSxKoA6e3QuUa-8';
+
+      // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrain: Cesium.Terrain.fromWorldTerrain(),
+        timeline: false,
+        animation: false,
+      });
+      const polyline = viewer.entities.add({
+        polyline: {
+          positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+            115.4175, 39.655, 400, 120.4175, 39.655, 1000000, 130.4175, 39.655,
+            400,
+          ]),
+          width: 2,
+          material: Cesium.Color.BLUE.withAlpha(0.5),
+        },
+      });
+
+      var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+      handler.setInputAction(function (movement) {
+        var pickedPrimitive = viewer.scene.pick(movement.position);
+        var pickedEntity = Cesium.defined(pickedPrimitive)
+          ? pickedPrimitive.id
+          : undefined;
+        // Highlight the currently picked entity
+        console.log(movement);
+        if (pickedEntity) {
+          //   pickedEntity.billboard.scale = 2.0;
+          pickedEntity.polyline.material = Cesium.Color.ORANGERED;
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+    </script>
+  </body>
+</html>

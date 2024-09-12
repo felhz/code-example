@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      .cesium-widget-credits {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      // Cesium.lang.locale = 'zh-CN';
+      Cesium.Ion.defaultAccessToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YmM4OTk0NC03MmRjLTQ0MTUtOTQxMy05MTk3OGFjZmU0MGMiLCJpZCI6MjQwMzAwLCJpYXQiOjE3MjU5MzU2MTd9.114QjBPqRG6mIGeLyF71ORY99cYaBSxKoA6e3QuUa-8';
+
+      // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrain: Cesium.Terrain.fromWorldTerrain(),
+        timeline: false,
+        animation: false,
+      });
+      viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
+      const layer = viewer.imageryLayers.addImageryProvider(
+        await Cesium.IonImageryProvider.fromAssetId(2411391)
+      );
+
+      function getBezierPoints(controlPoints, t) {
+        // 三阶贝塞尔曲线公式
+        let x =
+          Math.pow(1 - t, 3) * controlPoints[0].x +
+          3 * t * Math.pow(1 - t, 2) * controlPoints[1].x +
+          3 * t * t * (1 - t) * controlPoints[2].x +
+          t * t * t * controlPoints[3].x;
+
+        let y =
+          Math.pow(1 - t, 3) * controlPoints[0].y +
+          3 * t * Math.pow(1 - t, 2) * controlPoints[1].y +
+          3 * t * t * (1 - t) * controlPoints[2].y +
+          t * t * t * controlPoints[3].y;
+
+        return { x, y };
+      }
+
+      // 控制点
+      const controlPoints = [
+        { x: 115.0, y: 37.0 },
+        { x: 115.0, y: 38.0 },
+        { x: 115.0, y: 39.0 },
+        { x: 115.0, y: 40.0 },
+      ];
+
+      // 计算贝塞尔曲线上的点
+      const numPoints = 100;
+      const bezierPoints = [];
+      for (let i = 0; i <= numPoints; i++) {
+        const t = i / numPoints;
+        const point = getBezierPoints(controlPoints, t);
+        bezierPoints.push(point.x, point.y, 100000); // 添加高度
+      }
+
+      // 创建 Polyline 实体
+      const polyline = viewer.entities.add({
+        polyline: {
+          positions: Cesium.Cartesian3.fromDegreesArrayHeights(bezierPoints),
+          width: 2,
+          material: Cesium.Color.RED.withAlpha(0.9),
+        },
+      });
+      const point = viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(
+          controlPoints[0].x,
+          controlPoints[0].y
+        ),
+        point: {
+          pixelSize: 10,
+          color: Cesium.Color.RED,
+        },
+      });
+
+      viewer.zoomTo(polyline);
+      let duration = 5000;
+      viewer.clock.onTick.addEventListener((args) => {
+        console.log(viewer.clock.currentTime.secondsOfDay);
+        const t = (args._lastSystemTime / duration) % 1;
+        const bezierPoint = getBezierPoints(controlPoints, t);
+        point.position = Cesium.Cartesian3.fromDegrees(
+          bezierPoint.x,
+          bezierPoint.y,
+          100000
+        );
+      });
+    </script>
+  </body>
+</html>

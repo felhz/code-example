@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      .cesium-widget-credits {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      Cesium.Ion.defaultAccessToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YmM4OTk0NC03MmRjLTQ0MTUtOTQxMy05MTk3OGFjZmU0MGMiLCJpZCI6MjQwMzAwLCJpYXQiOjE3MjU5MzU2MTd9.114QjBPqRG6mIGeLyF71ORY99cYaBSxKoA6e3QuUa-8';
+
+      // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrain: Cesium.Terrain.fromWorldTerrain(),
+        timeline: false,
+        animation: false,
+      });
+      viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
+
+      // const layer = viewer.imageryLayers.addImageryProvider(
+      //   await Cesium.IonImageryProvider.fromAssetId(2411391)
+      // );
+      // 高德 WMTS
+      var layer = new Cesium.UrlTemplateImageryProvider({
+        url: 'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+        minimumLevel: 4,
+        maximumLevel: 18,
+      });
+      viewer.imageryLayers.addImageryProvider(layer);
+      // 116.471544,39.991835 北京市14号线 阜通站
+      const points = viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(116.471544, 39.991835, 30),
+        point: {
+          pixelSize: 10,
+          color: Cesium.Color.RED,
+        },
+      });
+      // viewer.zoomTo(points);
+    </script>
+  </body>
+</html>
