@@ -4,3 +4,4 @@ node_modules
 .vscode
 .idea
 background/**/prisma-client-js/**
+**/build/**
