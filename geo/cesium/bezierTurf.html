@@ -15,28 +15,30 @@
       .cesium-widget-credits {
         display: none !important;
       }
+      img {
+        display: none;
+      }
     </style>
   </head>
   <body>
     <div id="cesiumContainer"></div>
-
     <script type="module">
-      // let startLonLat = [115.0, 37.0];
-
-      // var line = turf.lineString([startLonLat, [130.0, 0]]);
-
-      // var greatCircle = turf.bezierSpline(line);
-
-      // console.log(greatCircle.geometry.coordinates);
-
       Cesium.Ion.defaultAccessToken =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YmM4OTk0NC03MmRjLTQ0MTUtOTQxMy05MTk3OGFjZmU0MGMiLCJpZCI6MjQwMzAwLCJpYXQiOjE3MjU5MzU2MTd9.114QjBPqRG6mIGeLyF71ORY99cYaBSxKoA6e3QuUa-8';
 
       // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
       const viewer = new Cesium.Viewer('cesiumContainer', {
-        terrain: Cesium.Terrain.fromWorldTerrain(),
+        // terrain: Cesium.Terrain.fromWorldTerrain(),
+        // terrain: false,
+        baseLayerPicker: false,
         timeline: false,
         animation: false,
+        skyBox: false,
+        geocoder: false,
+        homeButton: false,
+        fullscreenElement: false,
+        navigationHelpButton: true,
+        sceneModePicker: false,
       });
       viewer.scene.postProcessStages.fxaa.enabled = true;
       viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
@@ -45,6 +47,7 @@
         minimumLevel: 4,
         maximumLevel: 18,
       });
+      viewer.scene.backgroundColor = Cesium.Color.WHITE;
       viewer.imageryLayers.addImageryProvider(layer);
       const genrateBezier = (startLonLat, endLonLat) => {
         // let startLonLat = [130.0, 90.0];
@@ -56,57 +59,135 @@
           properties: { name: 'Seattle to DC' },
           npoints: 9000,
         });
+        const quadraticBezierPoint = (t, p0, p1, p2) => {
+          return {
+            x:
+              Math.pow(1 - t, 2) * p0.x +
+              2 * t * (1 - t) * p1.x +
+              Math.pow(t, 2) * p2.x,
+            y:
+              Math.pow(1 - t, 2) * p0.y +
+              2 * t * (1 - t) * p1.y +
+              Math.pow(t, 2) * p2.y,
+          };
+        };
+
         const points = greatCircle.geometry.coordinates;
-        // 计算贝塞尔曲线上的点
-        const numPoints = 100;
         const bezierPoints = [];
         for (let i = 0; i < points.length; i++) {
           let item = points[i];
-          bezierPoints.push(...item, 0); // 添加高度
+          const { y: height } = quadraticBezierPoint(
+            (i + 1) / points.length,
+            {
+              x: 0,
+              y: 0,
+            },
+            {
+              x: 100,
+              y: 100,
+            },
+            {
+              x: 200,
+              y: 0,
+            }
+          );
+          bezierPoints.push(...item, height * 3000); // 添加高度
         }
 
         // 创建 Polyline 实体
         const polyline = viewer.entities.add({
           polyline: {
             positions: Cesium.Cartesian3.fromDegreesArrayHeights(bezierPoints),
-            width: 2,
-            shadows: true,
-            material: Cesium.Color.RED.withAlpha(0.5),
+            width: new Cesium.CallbackProperty(() => {
+              return 2;
+            }, false),
+
+            // shadows: true,
+            material: new Cesium.ImageMaterialProperty({
+              image: './img/linear.jpg',
+              // transparent: true,
+            }),
+            // material: new Cesium.Material({
+            //   fabric: {
+            //     type: Cesium.Material.ImageType,
+            //     uniforms: {
+            //       image: './img/linear.jpg',
+            //     },
+            //   },
+            // }),
           },
         });
         const point = viewer.entities.add({
           position: Cesium.Cartesian3.fromDegrees(...startLonLat),
           point: {
             pixelSize: 5,
-            color: Cesium.Color.GREEN,
+            color: Cesium.Color.CHARTREUSE,
           },
         });
-        viewer.zoomTo(polyline);
         let duration = 5000;
         viewer.clock.onTick.addEventListener((args) => {
           const t = (args._lastSystemTime / duration) % 1;
           const bezierPoint = points[Math.floor(t * points.length)];
-          point.position = Cesium.Cartesian3.fromDegrees(...bezierPoint, 0);
+          const { y: height } = quadraticBezierPoint(
+            t,
+            {
+              x: 0,
+              y: 0,
+            },
+            {
+              x: 100,
+              y: 100,
+            },
+            {
+              x: 200,
+              y: 0,
+            }
+          );
+          point.position = Cesium.Cartesian3.fromDegrees(
+            ...bezierPoint,
+            height * 3090
+          );
         });
       };
 
       const bezierPoints = [
         [
           [115.0, 37.0],
-          [115.0, 0],
+          [115.0, 28],
         ],
         [
-          [115.0, 90.0],
-          [130.0, 0],
+          [115.0, 37.0],
+          [105.0, 27],
         ],
         [
-          [115.0, 0.0],
-          [130.0, -90],
+          [115.0, 37],
+          [120, 37],
+        ],
+        [
+          [115.0, 37],
+          [115, 40],
+        ],
+        [
+          [130.0, 90],
+          [130, -85],
         ],
       ];
       bezierPoints.forEach((item, index) => {
         genrateBezier(...item);
       });
+      window.viewer = viewer;
+      const centerPointEntity = viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(115.0, 37.0),
+        point: {
+          pixelSize: 5,
+          color: Cesium.Color.BLUE,
+        },
+      });
+      viewer.clock.shouldAnimate = true;
+      viewer.zoomTo(
+        centerPointEntity,
+        new Cesium.HeadingPitchRange(0, -1, 100000 * 100)
+      );
     </script>
   </body>
 </html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      .cesium-widget-credits {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      Cesium.Ion.defaultAccessToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YmM4OTk0NC03MmRjLTQ0MTUtOTQxMy05MTk3OGFjZmU0MGMiLCJpZCI6MjQwMzAwLCJpYXQiOjE3MjU5MzU2MTd9.114QjBPqRG6mIGeLyF71ORY99cYaBSxKoA6e3QuUa-8';
+
+      // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrain: Cesium.Terrain.fromWorldTerrain(),
+        timeline: false,
+        selectionIndicator: false,
+        // animation: false,
+      });
+      viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
+
+      var layer = new Cesium.UrlTemplateImageryProvider({
+        url: 'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+        minimumLevel: 4,
+        maximumLevel: 18,
+      });
+      viewer.imageryLayers.addImageryProvider(layer);
+
+      var modelUrl = '/model/car.glb';
+      let porp = new Cesium.CallbackProperty((time) => {
+        return 'car' + time.secondsOfDay.toFixed();
+      }, false);
+
+      const airPosition = Cesium.Cartesian3.fromDegrees(
+        116.471544,
+        39.991835,
+        300
+      );
+      let point = viewer.entities.add({
+        position: airPosition,
+        point: {
+          pixelSize: 10,
+          color: Cesium.Color.RED,
+        },
+        label: {
+          text: porp,
+          font: '14px sans-serif',
+          fillColor: Cesium.Color.RED,
+          pixelOffset: new Cesium.Cartesian2(0, 20),
+        },
+      });
+
+      try {
+        // const model = await Cesium.Model.fromGltfAsync({
+        //   url: modelUrl,
+        // });
+        // viewer.scene.primitives.add(model);
+
+        // viewer.zoomTo(
+        //   point,
+        //   new Cesium.HeadingPitchRange(
+        //     Cesium.Math.toRadians(0),
+        //     Cesium.Math.toRadians(-10),
+        //     100
+        //   )
+        // );
+        // viewer.trackedEntity = model;
+        const heading = Cesium.Math.toRadians(50.0);
+        const pitch = Cesium.Math.toRadians(-20.0);
+
+        viewer.camera.lookAt(
+          airPosition,
+          new Cesium.HeadingPitchRange(heading, pitch, 100)
+        );
+      } catch (error) {
+        console.log(`Failed to load model. ${error}`);
+      }
+
+      window.viewer = viewer;
+      // 启动动画
+      // viewer.clock.shouldAnimate = true;
+
+      viewer.clock.onTick.addEventListener(function (clock) {
+        // console.log(clock._currentTime.toString());
+        // lon += 0.0001;
+        // // 模型的位置
+        // modelEntity.position = Cesium.Cartesian3.fromDegrees(lon, lat, 30);
+        // viewer.flyTo(modelEntity);
+      });
+    </script>
+  </body>
+</html>

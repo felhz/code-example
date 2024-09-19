@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 将屏幕坐标转换为世界坐标
+      function convertScreenToWorld(left, top) {
+        const pick1 = new Cesium.Cartesian2(left, top);
+        const viewer = new Cesium.Viewer('cesiumContainer'); // 请确保你已经正确初始化了 Viewer 对象
+        return viewer.scene.globe.pick(
+          viewer.camera.getPickRay(pick1),
+          viewer.scene
+        );
+      }
+    </script>
+  </body>
+</html>

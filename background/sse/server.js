@@ -5,13 +5,13 @@ const path = require('path');
 
 http
   .createServer((req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-    res.setHeader(
-      'access-control-allow-methods',
-      'GET,POST,PUT,DELETE,OPTIONS'
-    );
-    res.setHeader('access-control-allow-headers', '*');
-    res.setHeader('access-control-allow-credentials', true);
+    // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+    // res.setHeader(
+    //   'access-control-allow-methods',
+    //   'GET,POST,PUT,DELETE,OPTIONS'
+    // );
+    // res.setHeader('access-control-allow-headers', '*');
+    // res.setHeader('access-control-allow-credentials', true);
     if (req.url === '/') {
       const file = fs.createReadStream(path.resolve(__dirname, './index.html'));
       file.pipe(res);
@@ -55,29 +55,17 @@ http
       res.writeHead(200, {
         'Content-Type': 'application/octet-stream',
       });
-      let body = '';
-      req.on('data', (chunk) => {
-        body += chunk.toString(); // 将接收到的 Buffer 转换为字符串
-      });
-
-      req.on('end', () => {
-        // body是一个字符串
-        console.log(body);
-        const { question = '' } = JSON.parse(body);
-        let count = 0;
-        const text = `line: { "type": "delta", "delta": "${question}${count}\\n"\n}`;
+      let count = 0;
+      const text = `line: { "type": "delta", "delta": "## 是HTML和CSS${count}\n"\n}`;
+      count++;
+      res.write(text);
+      setInterval(() => {
+        res.write(`line: {"type":"delta","delta":"## 是HTML和CSS${count}"\n}`);
         count++;
-        res.write(text);
-        setInterval(() => {
-          res.write(
-            `line: {"type":"delta","delta":"${question}${count}\\n"\n}`
-          );
-          count++;
-          if (count > 2) {
-            res.end();
-          }
-        }, 1000);
-      });
+        if (count > 10) {
+          res.end();
+        }
+      }, 1000);
     }
   })
   .listen(4000, () => {
