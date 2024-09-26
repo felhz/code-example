@@ -1,17 +1,20 @@
+import { Tree } from "antd"
 import { useEffect, useState } from "react"
 
 function OptionsIndex() {
-  const [data, setData] = useState("")
+  const [bookmarks, setBookmarks] = useState([])
   useEffect(() => {
     chrome.storage.sync.get("data", function (result) {
       console.log(result)
-      setData(result.data)
+    })
+    chrome.bookmarks.getTree(function (result) {
+      setBookmarks(result[0].children)
     })
   }, [])
 
   return (
     <div>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
+      <Tree treeData={bookmarks}></Tree>
     </div>
   )
 }

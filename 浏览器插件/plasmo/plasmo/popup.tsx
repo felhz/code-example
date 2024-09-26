@@ -1,4 +1,3 @@
-import { Button } from "antd"
 import { useEffect, useState } from "react"
 
 function IndexPopup() {
@@ -34,7 +33,6 @@ function IndexPopup() {
       style={{
         padding: 16
       }}>
-      <Button onClick={openOptionsPage}>打开option1</Button>
       <button onClick={openOptionsPage}>打开option</button>
       <button onClick={send}>send background</button>
       <button onClick={sendContent}>send content</button>

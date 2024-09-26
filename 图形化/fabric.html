@@ -4,11 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      .wrap {
+        display: flex;
+      }
+      .wrap > div {
+        flex: 1;
+      }
+      #list {
+        width: 100px;
+        flex-grow: 0;
+      }
+    </style>
   </head>
   <body>
-    <canvas id="canvas" width="300" height="300"></canvas>
+    <div class="wrap">
+      <div id="list">
+        <div draggable="true">react</div>
+        <div draggable="true">vue</div>
+      </div>
+      <div id="canvasWrap">
+        <canvas id="canvas" width="1000"></canvas>
+      </div>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/fabric@6.4.1/dist/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script>
       const canvas = new fabric.Canvas('canvas');
       const rect = new fabric.Rect({
@@ -18,32 +38,42 @@
         height: 70,
         fill: 'red',
       });
-      const rect1 = new fabric.Rect({
-        top: 100,
-        left: 100,
-        width: 60,
-        height: 70,
-        fill: 'red',
-      });
-      canvas.add(rect, rect1);
-      canvas.on({
-        'object:moving': onChange,
-        'object:scaling': onChange,
-        'object:rotating': onChange,
+
+      canvas.add(rect);
+
+      list.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', e.target.textContent);
+        console.log(111);
       });
 
-      function onChange(options) {
-        console.log(options.target);
+      // 添加拖拽进入容器事件
+      canvasWrap.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+      });
 
-        options.target.setCoords();
-        canvas.forEachObject(function (obj) {
-          if (obj === options.target) return;
-          obj.set(
-            'opacity',
-            options.target.intersectsWithObject(obj) ? 0.5 : 1
-          );
+      // 添加拖拽在容器上移动事件
+      canvasWrap.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+
+      // 添加放置事件
+      canvasWrap.addEventListener('drop', (e) => {
+        console.log('drop');
+        let data = e.dataTransfer.getData('text/plain');
+        let text = new fabric.Text(data, {
+          left: e.offsetX - canvasWrap.offsetLeft + 40,
+          top: e.offsetY - 6,
+          fontSize: 12,
         });
-      }
+
+        canvas.add(text);
+        e.preventDefault();
+      });
+
+      (function render() {
+        canvas.renderAll();
+        fabric.util.requestAnimFrame(render);
+      })();
     </script>
   </body>
 </html>
