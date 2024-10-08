@@ -37,7 +37,7 @@
       });
       viewer.imageryLayers.addImageryProvider(layer);
 
-      var modelUrl = '/model/car.glb';
+      var modelUrl = './model/car.glb';
       let porp = new Cesium.CallbackProperty((time) => {
         return 'car' + time.secondsOfDay.toFixed();
       }, false);
