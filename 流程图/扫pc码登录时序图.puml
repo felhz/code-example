@@ -1,0 +1,39 @@
+@startuml
+!theme plain
+' title 微信登录时序图
+actor 微信用户 as wechat 
+participant "ClassIn（pc端二维码）" as pc 
+participant 微信登录应用 as login 
+participant 后端服务器 as server 
+participant 微信开放平台 as wechatServer 
+
+
+group 扫码登录
+wechat -> pc:扫码
+pc --> wechat: 授权页url
+wechat -> login: 访问授权页
+end
+group 换取code
+login -> wechatServer: 携带appsecret和appid等，请求授权
+wechatServer --> login: code和state自定义数据
+end
+login -> server: 携带code，验证用户
+
+group 验证用户信息
+server -> wechatServer: 通过code换取网页授权access_token
+wechatServer --> server: 返回access_token
+server -> wechatServer: 携带access_token，请求用户信息
+wechatServer --> server: 返回用户信息
+server -> server: 处理逻辑判断是否已绑定
+end
+group 处理绑定
+server --> login: 返回是否绑定用户信息
+login -> login: 如果未绑定，输入Classin账号
+login -> server: 发送账号信息
+server -> server: 验证信息
+end
+server --> login: 通知完成验证
+login -> login: 退出网页
+server --> pc : 完成扫码验证
+pc -->pc: 登录账号
+@enduml

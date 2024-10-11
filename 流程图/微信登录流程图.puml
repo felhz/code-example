@@ -1,0 +1,38 @@
+@startuml
+!theme plain
+start 
+if(微信用户扫PC端ClassIn二维码？) then (是)
+    :进入确认登陆页;
+    if (点击确认登录判断是否包含token ?) then (是)
+        :验证token有效期;
+        if (token是否有效？) then (是)
+            :登录成功;
+            stop
+        else (否) 
+            :请求授权,登录成功;
+            stop
+        endif    
+        
+    else (否)
+        :请求微信授权;
+        if (验证码登录或者账号密码登录？) then (验证码登录)
+            if (检测是否绑定classin?) then (是)
+                :发送验证码,验证并登录;
+                stop
+            else (否)
+                :绑定账号或者注册; 
+                :登录成功; 
+                stop
+            endif
+        else (账号密码登录)
+            :登录成功;
+            stop
+        endif    
+    endif
+  
+else (否)
+    :跳转到官网;  
+    stop
+endif     
+
+@enduml
